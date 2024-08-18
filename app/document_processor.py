@@ -17,6 +17,7 @@ from tempfile import NamedTemporaryFile
 
 pdf_urls = ['https://www.mydatacenter.or.kr:3441/cmmn/fileBrDownload?id=JHuKqjlWK0e%2FH9Yi7ed09GsZWL6TiRKp9yg4qGj%2FKFmV9RC6j8RJdh6I8JAqzoFv&type=2', 'https://www.mydatacenter.or.kr:3441/cmmn/fileBrDownload?id=dKi%2B7cAM4PO8JA4z7jwm4AoM07vmQIbSKQ9EvM0DPRYokFCd%2BhLigsDUZ0hQopjD&type=2']
 
+# 주어진 pdf url을 통하여 document의 리스트 로드하여 반환한다.
 def load_documents():
     documents = []
 
@@ -25,14 +26,12 @@ def load_documents():
         response = requests.get(url)
         response.raise_for_status()  # Ensure the request was successful
 
-        # Save the PDF to a temporary file
         with NamedTemporaryFile(delete=True, suffix=".pdf") as temp_pdf:
             temp_pdf.write(response.content)
             temp_pdf.flush()  # Ensure all data is written
 
-            # Load the PDF with PyMuPDFLoader
             loader = PyMuPDFLoader(temp_pdf.name)
             pages = loader.load()
-            documents.append(pages)  # Append the pages to the documents list
+            documents.append(pages)
 
     return documents

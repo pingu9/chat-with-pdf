@@ -6,6 +6,8 @@ from langchain.prompts import (
     PromptTemplate,
     MessagesPlaceholder
 )
+
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
@@ -20,8 +22,6 @@ from operator import itemgetter
 documents = load_documents()
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
 
-chroma_db_host = "http://chromadb:8001"
-
 # 임베딩
 embeddings = OpenAIEmbeddings()
 
@@ -29,18 +29,11 @@ embeddings = OpenAIEmbeddings()
 
 for document in documents:
     texts = text_splitter.split_documents(document)
-    # docsearch = Chroma.from_documents(
-    #     documents = texts,
-    #     embeddings = embeddings,
-    #     client_settings = {"chroma_server" : chroma_db_host}
-    # )
     docsearch = Chroma.from_documents(
         texts,
         embeddings
     )
 
-
-# retriever 가져옴
 retriever = docsearch.as_retriever()
 
 def create_chain():
@@ -77,12 +70,22 @@ def create_chain():
     )
 
     return chain
+
 class ModelManager:
     def __init__(self):
         self.model = create_chain()
 
-    def get_chain(self):
+    #
+    def get_default_chain(self):
         return self.model
+
+    def get_chain_with_history(self, chain, get_session_history):
+        return RunnableWithMessageHistory(
+            chain,
+            get_session_history,
+            input_messages_key="question",
+            history_messages_key="chat_history",
+        )
 
 model_manager = ModelManager()
 
