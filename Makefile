@@ -13,6 +13,7 @@ DOCKER_RUN = docker-compose -f $(DOCKER_COMPOSE_FILE) run --rm $(APP_NAME)
 
 # Environment variables
 OPENAI_API_KEY ?= $(shell read -p "Enter your OpenAI API key: " key; echo $$key)
+STREAMLIT_PORT ?= $(shell read -p "Enter the port for streamlit: " port; echo $$port)
 
 # Help command
 .PHONY: help
@@ -60,7 +61,7 @@ test:
 .PHONY: docker-up
 docker-up:
 	@echo "Starting Docker containers..."
-	OPENAI_API_KEY=$(OPENAI_API_KEY) docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
+	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
 
 .PHONY: docker-down
 docker-down:
@@ -70,12 +71,12 @@ docker-down:
 .PHONY: docker-shell
 docker-shell:
 	@echo "Accessing the application shell in Docker..."
-	OPENAI_API_KEY=$(OPENAI_API_KEY) $(DOCKER_RUN) /bin/bash
+	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) $(DOCKER_RUN) /bin/bash
 
 .PHONY: docker-test
 docker-test:
 	@echo "Running tests in Docker containers..."
-	OPENAI_API_KEY=$(OPENAI_API_KEY) $(DOCKER_RUN) pytest tests/
+	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) $(DOCKER_RUN) pytest tests/
 
 # Clean up
 .PHONY: clean
