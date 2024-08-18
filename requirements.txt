@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+langchain
+langchainhub
+pypdf
+transformers
+faiss-cpu
+PyMuPDF
+pydantic
+streamlit
+requests
+langchain-community
+openai
+langchain-openai
+chromadb
+sentence-transformers

@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+wheels/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# pyenv virtual environments
+.python-version
+
+# Pytest
+.cache/
+.pytest_cache/
+
+# Environments
+.env
+.envrc
+*.env
+
+# MacOS files
+.DS_Store
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
