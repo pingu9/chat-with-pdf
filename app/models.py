@@ -11,7 +11,7 @@ from langchain_community.embeddings.sentence_transformer import (
 )
 from langchain_community.vectorstores import Chroma
 
-from app.document_processor import load_documents
+from document_processor import load_documents
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
 
@@ -106,6 +106,9 @@ class ModelManager:
 
     def generate_answer(self, prompt: str) -> str:
         return self.model.invoke(prompt)
+
+    def generate_answer_stream(self, prompt: str):
+        return self.model.stream(prompt)
 
 model_manager = ModelManager()
 

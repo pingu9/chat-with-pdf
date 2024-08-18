@@ -61,7 +61,7 @@ test:
 .PHONY: docker-up
 docker-up:
 	@echo "Starting Docker containers..."
-	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
+	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) docker-compose -f $(DOCKER_COMPOSE_FILE) up -d --build
 
 .PHONY: docker-down
 docker-down:

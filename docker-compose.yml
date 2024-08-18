@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-  fastapi:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    container_name: fastapi_service
-    depends_on:
-      - chromadb
-    networks:
-      - app-network
+#  fastapi:
+#    build: .
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - .:/app
+#    environment:
+#      - OPENAI_API_KEY=${OPENAI_API_KEY}
+#    container_name: fastapi_service
+#    depends_on:
+#      - chromadb
+#    networks:
+#      - app-network
 
   streamlit:
     build: .
@@ -21,21 +21,24 @@ services:
       - "${STREAMLIT_PORT}:8501"
     volumes:
       - .:/app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - STREAMLIT_PORT=${STREAMLIT_PORT}
     container_name: streamlit_service
-    depends_on:
-      - fastapi
-      - chromadb
+#    depends_on:
+#      - fastapi
+#      - chromadb
     command: streamlit run app/streamlit_ui.py
     networks:
       - app-network
 
-  chromadb:
-    image: chromadb/chroma
-    ports:
-      - "8001:8001"
-    container_name: chromadb_service
-    networks:
-      - app-network
+#  chromadb:
+#    image: chromadb/chroma
+#    ports:
+#      - "8001:8001"
+#    container_name: chromadb_service
+#    networks:
+#      - app-network
 
 networks:
   app-network:

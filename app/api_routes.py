@@ -1,11 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.rag import RAGPipeline
-from app.models import ModelManager
+from models import ModelManager
 
 router = APIRouter()
 
-# rag_pipeline = RAGPipeline(documents)
 model_manager = ModelManager()
 
 class QuestionRequest(BaseModel):
