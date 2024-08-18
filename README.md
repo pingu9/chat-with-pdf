@@ -17,7 +17,9 @@
 
 document_processor.py: pymupdf 모듈을 이용하여 PDF 문서를 document로 변환합니다.
 
-models.py : chromaDB와 openAIEmbedding을 이용하여 벡터 스토어에 문서를 저장하고 이 벡터 스토어를 이용해 주어진 입력으로부터 답변을 생성합니다.
+retriever.py: chromaDB와 openAIEmbedding을 이용하여 벡터 스토어에 pdf문서를 저장합니다.
+
+models.py  주어진 사용자 입력, 그 동안의 채팅 히스토리, 벡터 스토어에 저장된 내용을 이용해 답변을 생성합니다.
 
 streamlit_ui.py: streamlit을 이용하여 멀티 턴 채팅 형태의 ui를 구성합니다.
 
