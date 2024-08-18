@@ -20,7 +20,6 @@ help:
 	@echo "  make             Build and start Docker containers"
 	@echo "  make clean       Stop Docker containers and clean up"
 	@echo "  make shell       Access the application shell in Docker"
-	@echo "  make test        Run tests in Docker containers"
 
 # Docker targets
 
@@ -42,8 +41,3 @@ clean:
 shell:
 	@echo "Accessing the application shell in Docker..."
 	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) docker exec -it streamlit_service /bin/bash
-
-.PHONY: test
-test:
-	@echo "Running tests in Docker containers..."
-	OPENAI_API_KEY=$(OPENAI_API_KEY) STREAMLIT_PORT=$(STREAMLIT_PORT) $(DOCKER_RUN) pytest tests/
