@@ -3,7 +3,8 @@ from langchain.schema.runnable import RunnablePassthrough
 from langchain.prompts import (
     ChatPromptTemplate, 
     HumanMessagePromptTemplate, 
-    PromptTemplate
+    PromptTemplate,
+    MessagesPlaceholder
 )
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings.sentence_transformer import (
@@ -14,11 +15,12 @@ from langchain_community.vectorstores import Chroma
 from document_processor import load_documents
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_core.output_parsers import StrOutputParser
+from operator import itemgetter
 
 documents = load_documents()
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
 
-chroma_db_host = "http://chromadb"
+chroma_db_host = "http://chromadb:8001"
 
 # 임베딩
 embeddings = OpenAIEmbeddings()
@@ -41,28 +43,14 @@ for document in documents:
 # retriever 가져옴
 retriever = docsearch.as_retriever()
 
-prompt_template = PromptTemplate(
-    input_variables=['question', 'context'],
-    template=(
+def create_chain():
+    prompt = ChatPromptTemplate.from_template(
         "You are an assistant for question-answering tasks. "
         "Use the following pieces of retrieved context to answer the question. "
         "If you don't know the answer, just say that you don't know. "
-        "Use three sentences maximum and keep the answer concise.\n"
-    ),
-    template_format='f-string',
-    validate_template=True
-)
-
-prompt_template2 = PromptTemplate(
-    input_variables=['question', 'context'],
-    template=(
-        "You are an assistant for question-answering tasks. "
-        "Use the following pieces of retrieved context to answer the question. "
-        "If you don't know the answer, just say that you don't know. "
-        # "Use three sentences maximum and keep the answer concise.\n"
         "Please write your answer in a markdown format with the main points"
         "Be sure to include your source and page numbers in your answer."
-        "Question: {question} \nContext: {context} \nAnswer:"
+        "Previous Chat History: {chat_history} Question: {question}\nContext: {context} \nAnswer:"
 
         """
         Example format:
@@ -73,42 +61,28 @@ prompt_template2 = PromptTemplate(
         - page source and page number
 
         """
-    ),
-    template_format='f-string',
-    validate_template=True
-)
+    )
 
-# Define the HumanMessagePromptTemplate
-human_message_prompt = HumanMessagePromptTemplate(prompt=prompt_template2)
+    llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
-# Define the ChatPromptTemplate using the HumanMessagePromptTemplate
-rag_prompt = ChatPromptTemplate(
-    input_variables=['question', 'context'],
-    messages=[human_message_prompt]
-)
+    chain = (
+        {
+            "context": itemgetter("question") | retriever,
+            "question": itemgetter("question"),
+            "chat_history": itemgetter("chat_history"),
+        }
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
 
-# ChatGPT 모델 지정
-llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
-
-output_parser = StrOutputParser()
-
-# pipe operator를 활용한 체인 생성
-rag_chain = (
-    {"context": retriever, "question": RunnablePassthrough()} 
-    | rag_prompt 
-    | llm 
-    | StrOutputParser()
-)
-
+    return chain
 class ModelManager:
     def __init__(self):
-        self.model = rag_chain
+        self.model = create_chain()
 
-    def generate_answer(self, prompt: str) -> str:
-        return self.model.invoke(prompt)
-
-    def generate_answer_stream(self, prompt: str):
-        return self.model.stream(prompt)
+    def get_chain(self):
+        return self.model
 
 model_manager = ModelManager()
 

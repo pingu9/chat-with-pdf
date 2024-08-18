@@ -18,7 +18,6 @@ from tempfile import NamedTemporaryFile
 pdf_urls = ['https://www.mydatacenter.or.kr:3441/cmmn/fileBrDownload?id=JHuKqjlWK0e%2FH9Yi7ed09GsZWL6TiRKp9yg4qGj%2FKFmV9RC6j8RJdh6I8JAqzoFv&type=2', 'https://www.mydatacenter.or.kr:3441/cmmn/fileBrDownload?id=dKi%2B7cAM4PO8JA4z7jwm4AoM07vmQIbSKQ9EvM0DPRYokFCd%2BhLigsDUZ0hQopjD&type=2']
 
 def load_documents():
-    print("Initial Document Loading...")
     documents = []
 
     for url in pdf_urls:
